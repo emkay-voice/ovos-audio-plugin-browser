@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ovos-audio-plugin-browser"
+version = "0.1.0a1"
+description = "OpenVoiceOS audio backend: plays music, radio and podcasts in a browser's <audio> element, over the messagebus"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+authors = [{name = "Andreas Lorensen"}]
+requires-python = ">=3.10"
+keywords = ["ovos", "openvoiceos", "plugin", "audio", "audioservice", "ocp", "media", "radio", "browser", "pyodide", "emkay"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Environment :: WebAssembly :: Emscripten",
+    "Topic :: Multimedia :: Sound/Audio :: Players",
+]
+dependencies = [
+    "ovos-plugin-manager>=0.0.26",
+    "ovos-bus-client>=0.0.8",
+    "ovos-utils>=0.0.38",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/emkay-voice/ovos-audio-plugin-browser"
+Issues = "https://github.com/emkay-voice/ovos-audio-plugin-browser/issues"
+Emkay = "https://github.com/emkay-voice/emkay"
+
+# ovos-audio's classic AudioService finds its backends here
+[project.entry-points."mycroft.plugin.audioservice"]
+ovos_audio_browser = "ovos_audio_plugin_browser"
+
+[tool.setuptools]
+packages = ["ovos_audio_plugin_browser"]
