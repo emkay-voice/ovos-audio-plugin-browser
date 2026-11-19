@@ -10,7 +10,7 @@ readme = "README.md"
 license = {text = "Apache-2.0"}
 authors = [{name = "Andreas Lorensen"}]
 requires-python = ">=3.10"
-keywords = ["ovos", "openvoiceos", "plugin", "audio", "audioservice", "ocp", "media", "radio", "browser", "pyodide", "emkay"]
+keywords = ["ovos", "openvoiceos", "plugin", "audio", "audioservice", "ocp", "media", "ovos-media", "radio", "browser", "pyodide", "emkay"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: Apache Software License",
@@ -35,6 +35,10 @@ Emkay = "https://github.com/emkay-voice/emkay"
 # ovos-audio's classic AudioService finds its backends here
 [project.entry-points."mycroft.plugin.audioservice"]
 ovos_audio_browser = "ovos_audio_plugin_browser"
+
+# ... and ovos-media its audio players (MediaBackend v2, ovos-plugin-manager >= 3)
+[project.entry-points."opm.media.audio"]
+ovos-media-audio-plugin-browser = "ovos_audio_plugin_browser.media:BrowserMediaBackend"
 
 [tool.setuptools]
 packages = ["ovos_audio_plugin_browser"]

@@ -10,6 +10,10 @@ the browser (Pyodide), where it is the player behind ovos-audio's classic
 [ovos-audio-plugin-mpv](https://github.com/OpenVoiceOS/ovos-audio-plugin-mpv)
 and vlc, which start a program on the device, which a browser cannot do.
 
+The same player is also an audio player for
+[ovos-media](https://github.com/OpenVoiceOS/ovos-media), OpenVoiceOS' newer
+media service (see [ovos-media](#ovos-media) below).
+
 ## How it works
 
 ovos-audio's `AudioService` (the `mycroft.audio.service.*` API that OCP uses
@@ -57,6 +61,40 @@ pip install ovos-audio-plugin-browser
 - `"legacy": true` makes OCP play through `AudioService` (and this backend)
   instead of waiting for ovos-media.
 
+## ovos-media
+
+For ovos-media the package has a second player,
+`ovos_audio_plugin_browser.media:BrowserMediaBackend`, registered as
+`ovos-media-audio-plugin-browser` (entry point `opm.media.audio`). It is a
+MediaBackend v2 plugin, so it needs ovos-plugin-manager 3 and an ovos-media
+that speaks v2 ([ovos-media#194](https://github.com/OpenVoiceOS/ovos-media/pull/194)).
+
+It speaks the same protocol to the page (below). ovos-media owns the
+playlist and every `ovos.common_play.*` state message. The player only
+reports what the page did: `playing` is reported as `TRACK_START`, then
+`RESUMED` after a pause; `paused` as `PAUSED`, so a pause from the page's
+own controls or the phone's media keys is seen too; `ended` as
+`END_OF_MEDIA`; and `error` as `ERROR`. The page does not answer a
+stop, so the player reports `STOPPED` itself.
+
+ovos-media loads it without configuration; to set it up by name:
+
+```json
+{
+  "media": {
+    "audio_players": {
+      "browser": {"module": "ovos-media-audio-plugin-browser", "duck_factor": 0.3}
+    },
+    "enable_mpris": false
+  },
+  "intents": {
+    "ovos-ocp-pipeline-plugin": {"legacy": false}
+  }
+}
+```
+
+`enable_mpris: false`: MPRIS needs D-Bus, which a browser does not have.
+
 ## The protocol
 
 To the page, one track at a time:
@@ -88,15 +126,16 @@ site's CORS permission, while a Web Audio graph turns such a stream silent.
 
 ## Limits
 
-- **https pages cannot play `http://` streams.** Browsers block this "mixed
-  content". Many internet radio stations have an https address; those
-  that do not fail with a clear reason, and OCP moves on to its next result.
+- **https pages and `http://` streams.** Browsers do not play "mixed
+  content" on an https page. Chromium and Firefox retry an `http://` audio
+  address over https. A station that does not answer on https fails with a
+  clear reason, and OCP moves on to its next result.
 - **Formats** are whatever the browser plays: mp3, aac, ogg/opus, and HLS
   in Safari. YouTube and the like need a stream extractor in OCP, which
   needs a site's permission to read it from a browser.
-- The backend uses ovos-audio's classic audio service (`mycroft.plugin.audioservice`),
+- The classic player uses ovos-audio's audio service (`mycroft.plugin.audioservice`),
   which OPM marks as deprecated in favour of ovos-media. It is what OCP's
-  legacy mode uses today; an ovos-media plugin can follow when Emkay moves.
+  legacy mode uses today. The ovos-media player is the one to move to.
 
 ## License
 
