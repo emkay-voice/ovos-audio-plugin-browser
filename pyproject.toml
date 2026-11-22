@@ -4,11 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ovos-audio-plugin-browser"
-version = "0.1.0a1"
+version = "0.1.0a2"
 description = "OpenVoiceOS audio backend: plays music, radio and podcasts in a browser's <audio> element, over the messagebus"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 authors = [{name = "emkay-voice"}]
+maintainers = [{name = "Andreas Lorensen"}]
 requires-python = ">=3.10"
 keywords = ["ovos", "openvoiceos", "plugin", "audio", "audioservice", "ocp", "media", "radio", "browser", "pyodide", "emkay"]
 classifiers = [
