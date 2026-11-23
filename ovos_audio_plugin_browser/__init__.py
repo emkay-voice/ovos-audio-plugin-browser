@@ -21,6 +21,7 @@ speaks or listens, and the OCP status messages are the same as for any
 other backend: AudioService and the AudioBackend template handle them,
 this module only plays one track at a time and reports what happened.
 """
+import sys
 import time
 from typing import List
 
@@ -69,8 +70,14 @@ class BrowserAudioBackend(AudioBackend):
         self.bus.emit(self._format_msg(msg_type, data or {}))
 
     def supported_uris(self) -> List[str]:
-        # what <audio> fetches by itself; file:// is not reachable from a page
-        return ["http", "https", "blob", "data"]
+        # what <audio> fetches by itself. A file:// track is not reachable
+        # from a page, except where OVOS runs in the page itself (Emkay, in
+        # Pyodide): there the page is handed the track's bytes, or plays it
+        # from a folder it was given. "file" in the config says so elsewhere.
+        uris = ["http", "https", "blob", "data"]
+        if self.config.get("file", sys.platform == "emscripten"):
+            uris.append("file")
+        return uris
 
     def play(self, repeat=None):
         """Start the current track (the template's load_track set it).

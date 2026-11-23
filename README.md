@@ -51,6 +51,10 @@ pip install ovos-audio-plugin-browser
 ```
 
 - `duck_factor`: the music's volume while OVOS speaks or listens, 0..1.
+- `file`: whether the page can play `file://` tracks. A page can't open the
+  device's files by itself, so this is off, except where OVOS runs in the
+  page (Emkay, in Pyodide), which hands the page a track's bytes, or plays
+  it from a folder the page was given.
 - Without a `backends` entry of this type, one called `browser` is made, so
   installing the plugin is enough; set `default-backend` to make it the
   first choice.

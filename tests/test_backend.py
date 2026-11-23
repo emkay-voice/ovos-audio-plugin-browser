@@ -97,3 +97,14 @@ def test_late_report_after_stop_is_ignored():
     b.stop()
     page(bus, state="playing")
     assert started == []
+
+
+def test_file_tracks_only_where_the_page_can_play_them(monkeypatch):
+    bus = FakeBus()
+    (b,) = plugin.load_service({}, bus)
+    assert "file" not in b.supported_uris()
+    monkeypatch.setattr(plugin.sys, "platform", "emscripten")
+    assert "file" in b.supported_uris()
+    (c,) = plugin.load_service({"backends": {"browser": {"type": "ovos_audio_browser", "file": True}}}, bus)
+    monkeypatch.setattr(plugin.sys, "platform", "linux")
+    assert "file" in c.supported_uris()
